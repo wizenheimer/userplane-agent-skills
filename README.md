@@ -23,7 +23,15 @@ Agent skills for integrating [Userplane](https://userplane.io) screen recording 
 
 ## Installation
 
-### Claude Code
+### Using the skills CLI (recommended)
+
+```bash
+npx skills add wizenheimer/userplane-agent-skills
+```
+
+This installs all Userplane skills and makes them available to your agent automatically.
+
+### Claude Code (manual)
 
 Copy a skill into your Claude Code skills directory:
 
