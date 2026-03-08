@@ -1,0 +1,6 @@
+{
+  "version": "0.0.1",
+  "organization": "Userplane",
+  "date": "March 2026",
+  "abstract": "Agent skills for integrating Userplane screen recording SDK across 9 frameworks, covering the Web SDK, Metadata SDK, sensitive data redaction, CDN installation, and best practices."
+}
