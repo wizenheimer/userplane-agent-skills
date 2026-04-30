@@ -1,0 +1,40 @@
+{
+  "name": "userplane",
+  "version": "0.1.0",
+  "description": "Userplane screen recording: framework skills, workspace + docs MCP servers, and Codex-native workflows for integrate, audit, debug, and privacy.",
+  "author": {
+    "name": "wizenheimer",
+    "url": "https://github.com/wizenheimer"
+  },
+  "homepage": "https://github.com/userplanehq/userplane-agent",
+  "repository": "https://github.com/userplanehq/userplane-agent",
+  "license": "MIT",
+  "keywords": [
+    "userplane",
+    "screen-recording",
+    "observability",
+    "frontend",
+    "codex"
+  ],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "Userplane",
+    "shortDescription": "Install, audit, debug, and privacy-check Userplane screen recording.",
+    "longDescription": "Userplane gives Codex framework-specific integration guidance, Userplane workspace and docs MCP servers, and focused workflows for installing, auditing, debugging, and privacy-checking screen recording setups.",
+    "developerName": "Userplane",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://userplane.io/",
+    "defaultPrompt": [
+      "Install Userplane in this app.",
+      "Audit my Userplane setup.",
+      "Debug this Userplane recording."
+    ],
+    "brandColor": "#111827"
+  }
+}

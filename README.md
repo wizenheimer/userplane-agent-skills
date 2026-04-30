@@ -1,8 +1,8 @@
-# Userplane Agent Skills
+# Userplane Agent Plugins
 
-[Userplane](https://userplane.io) screen recording SDK — as a Claude Code plugin and a skills pack for every other AI coding agent.
+[Userplane](https://userplane.io) screen recording SDK as both a Claude Code plugin and a Codex plugin, with a skills pack for other AI coding agents.
 
-Gives your agent 14 framework-specific integration guides, both production Userplane MCP servers, and purpose-built subagents/commands for **integrating**, **auditing**, **debugging**, and **privacy-proofing** a Userplane install — all from one install.
+Gives your agent 14 framework and reference skills, both production Userplane MCP servers, and purpose-built workflows for **integrating**, **auditing**, **debugging**, and **privacy-proofing** a Userplane install.
 
 ---
 
@@ -27,9 +27,27 @@ After install, verify:
 /mcp             # userplane-workspace and userplane-docs listed
 ```
 
+### Codex plugin (recommended for Codex)
+
+Registers skills + MCP in Codex. The Codex plugin uses a thin `plugins/userplane` wrapper that points to the canonical root skills and MCP config.
+
+```bash
+# one-time: register this repo as a plugin marketplace
+codex marketplace add userplanehq/userplane-agent
+```
+
+Then open `/plugins` in Codex and install `userplane` from the `Userplane` marketplace.
+
+After install, verify:
+
+```text
+/plugins         # userplane listed and enabled
+/mcp             # userplane-workspace and userplane-docs listed
+```
+
 ### Skills CLI (for Cursor, Windsurf, and other agents)
 
-Installs the 14 skills into your agent's global skills directory. Works with any tool that consumes the open [Agent Skills](https://agentskills.io) standard.
+Installs all skills into your agent's global skills directory. Works with any tool that consumes the open [Agent Skills](https://agentskills.io) standard.
 
 ```bash
 npx skills add userplanehq/userplane-agent
@@ -59,7 +77,7 @@ Paste the relevant `SKILL.md` into your agent's rules / context file.
 
 ---
 
-## Commands
+## Claude Code commands
 
 | Command | Job | Purpose |
 |---|---|---|
@@ -74,7 +92,7 @@ Each command delegates to exactly one subagent (`integrate-agent`, `audit-agent`
 
 ## Usage
 
-### Slash commands
+### Claude Code slash commands
 
 ```
 /userplane:integrate
@@ -92,14 +110,36 @@ Each command delegates to exactly one subagent (`integrate-agent`, `audit-agent`
 
 **`/userplane:privacy`** scans the repo for privacy issues: missing `data-userplane-blur` attributes on PII-adjacent inputs, raw PII in `setMetadata` calls, CSP `frame-src` gaps for third-party iframes (Stripe, Auth0, etc.), and inline handlers that leak sensitive data into the DOM. It reports findings ranked by severity with file:line citations and concrete diffs.
 
+### Codex workflow skills
+
+Invoke the Codex workflows by natural language or by naming the skill explicitly:
+
+```text
+$userplane-integrate Install Userplane in this app.
+$userplane-audit Verify my Userplane setup.
+$userplane-debug rec_01HX2KYN
+$userplane-debug Sarah's checkout failure yesterday.
+$userplane-privacy Check whether recordings expose PII.
+```
+
+**`userplane-integrate`** detects the framework, loads the matching framework skill, and writes the install as concrete edits.
+
+**`userplane-audit`** is read-only. It produces the same PASS/FAIL integration checklist as `/userplane:audit`, with file:line citations and suggested diffs.
+
+**`userplane-debug`** resolves a recording through the `userplane-workspace` MCP server, fetches console/network/action evidence after confirmation, and reports a root-cause timeline.
+
+**`userplane-privacy`** is read-only. It audits blur coverage, metadata PII leakage, CSP iframe gaps, and inline DOM leaks.
+
 ### Natural-language activation
 
-The 14 skills also activate automatically when a prompt matches — no slash command needed:
+The skills also activate automatically when a prompt matches. No slash command is needed:
 
 - *"set up Userplane in this Astro site"* → `userplane-astro`
 - *"what's the setMetadata signature?"* → `userplane-metadata-sdk`
 - *"why is the recorder iframe blocked?"* → `userplane-cdn` + `userplane-sensitive-data`
 - *"what should I avoid when shipping Userplane to prod?"* → `userplane-best-practices`
+- *"audit my Userplane setup"* → `userplane-audit`
+- *"debug this Userplane recording"* → `userplane-debug`
 
 ---
 
@@ -134,28 +174,53 @@ The 14 skills also activate automatically when a prompt matches — no slash com
 | [userplane-sensitive-data](skills/userplane-sensitive-data/) | Blur config, third-party iframe compatibility |
 | [userplane-best-practices](skills/userplane-best-practices/) | Cross-cutting install, SDK, metadata, privacy |
 
+### Codex workflow skills
+
+| Skill | Workflow |
+|---|---|
+| [userplane-integrate](skills/userplane-integrate/) | Detect framework and install Userplane as concrete edits |
+| [userplane-audit](skills/userplane-audit/) | Read-only PASS/FAIL integration audit |
+| [userplane-debug](skills/userplane-debug/) | Recording root-cause analysis via workspace MCP |
+| [userplane-privacy](skills/userplane-privacy/) | Read-only PII, blur, metadata, and CSP audit |
+
 ---
 
 ## MCP servers
 
-Declared in `.mcp.json` and auto-loaded by the plugin.
+Declared in `.mcp.json` and auto-loaded by the Claude Code and Codex plugins.
 
 | Server | URL | Purpose |
 |---|---|---|
 | `userplane-workspace` | `https://api.userplane.io/mcp` | Workspaces, projects, links, domains, recordings + console/network/actions viewers. OAuth 2.1 (DCR). |
 | `userplane-docs` | `https://docs.userplane.io/mcp` | Documentation search. |
 
-**First call** opens a browser for OAuth. Tokens are stored by Claude Code. If a refresh silently fails, run `/mcp` to re-authenticate.
+**First call** opens a browser for OAuth. Tokens are stored by the host agent. If a refresh silently fails, run `/mcp` to re-authenticate.
+
+### Optional Codex smoke test
+
+`codex marketplace add` updates local Codex config, so this repo does not run it as an automated test. To smoke-test manually:
+
+```bash
+codex marketplace add userplanehq/userplane-agent
+```
+
+Then install `userplane` from `/plugins` and verify `/mcp` shows `userplane-workspace` and `userplane-docs`.
 
 ---
 
 ## What's inside the plugin
 
 ```
+.agents/plugins/
+  marketplace.json
 .claude-plugin/
   plugin.json
   marketplace.json
 .mcp.json                  # 2 HTTP MCP servers
+plugins/userplane/         # Codex plugin wrapper
+  .codex-plugin/plugin.json
+  .mcp.json -> ../../.mcp.json
+  skills -> ../../skills
 agents/                    # 4 subagents (1:1 with commands)
   integrate-agent.md
   audit-agent.md
@@ -166,9 +231,13 @@ commands/                  # 4 JTBD slash commands
   audit.md
   debug.md
   privacy.md
-skills/                    # 14 skills (unchanged layout — skills.sh compatible)
+skills/                    # 18 skills: 14 domain skills + 4 Codex workflows
   userplane-react/
   userplane-nextjs/
+  userplane-integrate/
+  userplane-audit/
+  userplane-debug/
+  userplane-privacy/
   …
 ```
 
