@@ -1,6 +1,8 @@
 ---
 name: privacy-agent
 description: Audit the repo's Userplane privacy posture. Read-only scan for missing data-userplane-blur attributes, PII in setMetadata calls, CSP frame-src gaps for third-party auth/payment iframes, and inline handlers leaking into recordings. Use when the user asks about privacy, PII, redaction, GDPR, or data leakage.
+model: fast
+readonly: true
 tools: Read, Glob, Grep
 skills: userplane-sensitive-data, userplane-cdn, userplane-metadata-sdk
 ---

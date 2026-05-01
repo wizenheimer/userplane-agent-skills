@@ -1,6 +1,8 @@
 ---
 name: debug-agent
 description: Diagnose a Userplane recording. Accepts a recording ID or a natural-language description ("Sarah's failed checkout"), resolves it against the workspace MCP, then correlates console + network + actions into a root-cause timeline. Use when the user has a reported session issue to debug.
+model: inherit
+readonly: true
 tools: mcp__userplane-workspace__userplane_list_workspaces, mcp__userplane-workspace__userplane_list_projects, mcp__userplane-workspace__userplane_list_recordings, mcp__userplane-workspace__userplane_get_link, mcp__userplane-workspace__userplane_get_profile, mcp__userplane-workspace__userplane_get_rec_info, mcp__userplane-workspace__userplane_get_rec_console, mcp__userplane-workspace__userplane_get_rec_network, mcp__userplane-workspace__userplane_get_rec_actions, mcp__userplane-workspace__userplane_show_recording, Read, Grep
 skills: userplane-web-sdk, userplane-metadata-sdk
 ---

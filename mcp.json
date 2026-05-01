@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "userplane-workspace": {
+      "type": "http",
+      "url": "https://api.userplane.io/mcp"
+    },
+    "userplane-docs": {
+      "type": "http",
+      "url": "https://docs.userplane.io/mcp"
+    }
+  }
+}

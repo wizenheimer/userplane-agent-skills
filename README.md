@@ -1,8 +1,8 @@
 # Userplane Agent Plugins
 
-[Userplane](https://userplane.io) screen recording SDK as both a Claude Code plugin and a Codex plugin, with a skills pack for other AI coding agents.
+[Userplane](https://userplane.io) screen recording SDK as a Claude Code plugin, Cursor plugin, and Codex plugin, with a skills pack for other AI coding agents.
 
-Gives your agent 14 framework and reference skills, both production Userplane MCP servers, and purpose-built workflows for **integrating**, **auditing**, **debugging**, and **privacy-proofing** a Userplane install.
+Gives your agent 18 skills (14 framework/reference skills plus 4 workflow skills), both production Userplane MCP servers, and purpose-built workflows for **integrating**, **auditing**, **debugging**, and **privacy-proofing** a Userplane install.
 
 ---
 
@@ -27,6 +27,27 @@ After install, verify:
 /mcp             # userplane-workspace and userplane-docs listed
 ```
 
+### Cursor plugin (recommended for Cursor)
+
+Registers skills + MCP + subagents + slash commands + Cursor rules in one go.
+
+Once published, install `userplane` from the Cursor Marketplace.
+
+For local development, symlink this repo into Cursor's local plugin directory:
+
+```bash
+mkdir -p ~/.cursor/plugins/local
+ln -sfn "$(pwd)" ~/.cursor/plugins/local/userplane
+```
+
+Reload Cursor, then verify:
+
+```text
+Cursor Settings -> Rules      # Userplane skills/rules are visible
+Agent slash menu              # userplane-* commands are visible
+MCP settings                  # userplane-workspace and userplane-docs are visible
+```
+
 ### Codex plugin (recommended for Codex)
 
 Registers skills + MCP in Codex. The Codex plugin uses a thin `plugins/userplane` wrapper that points to the canonical root skills and MCP config.
@@ -45,9 +66,9 @@ After install, verify:
 /mcp             # userplane-workspace and userplane-docs listed
 ```
 
-### Skills CLI (for Cursor, Windsurf, and other agents)
+### Skills CLI (for Cursor without plugins, Windsurf, Codex, and other agents)
 
-Installs all skills into your agent's global skills directory. Works with any tool that consumes the open [Agent Skills](https://agentskills.io) standard.
+Installs all 18 skills into your agent's global skills directory. Works with any tool that consumes the open [Agent Skills](https://agentskills.io) standard.
 
 ```bash
 npx skills add userplanehq/userplane-agent
@@ -71,20 +92,20 @@ cp -r skills/* ~/.claude/skills/
 
 Upload any `skills/<name>/SKILL.md` as project knowledge.
 
-### Cursor / other agents
+### Other agents
 
 Paste the relevant `SKILL.md` into your agent's rules / context file.
 
 ---
 
-## Claude Code commands
+## Workflow commands
 
-| Command | Job | Purpose |
-|---|---|---|
-| `/userplane:integrate` | Add Userplane to this app | Detect framework and wire up the matching install (provider, script, CSP, env) |
-| `/userplane:audit` | Verify my install is correct | Read-only PASS/FAIL checklist against the matching framework skill |
-| `/userplane:debug <id \| description>` | Root-cause a failing session | Fetch and analyze a recording via the workspace MCP |
-| `/userplane:privacy` | Check PII / privacy posture | Audit blur attrs, `setMetadata` leakage, CSP `frame-src` |
+| Workflow | Claude Code | Cursor | Purpose |
+|---|---|---|---|
+| Integrate | `/userplane:integrate` | `/userplane-integrate` | Detect framework and wire up the matching install (provider, script, CSP, env) |
+| Audit | `/userplane:audit` | `/userplane-audit` | Read-only PASS/FAIL checklist against the matching framework skill |
+| Debug | `/userplane:debug <id \| description>` | `/userplane-debug <id \| description>` | Fetch and analyze a recording via the workspace MCP |
+| Privacy | `/userplane:privacy` | `/userplane-privacy` | Audit blur attrs, `setMetadata` leakage, CSP `frame-src` |
 
 Each command delegates to exactly one subagent (`integrate-agent`, `audit-agent`, `debug-agent`, `privacy-agent`) — no shared agents, no modes.
 
@@ -100,6 +121,16 @@ Each command delegates to exactly one subagent (`integrate-agent`, `audit-agent`
 /userplane:debug rec_01HX2KYN
 /userplane:debug "Sarah's checkout failure yesterday"
 /userplane:privacy
+```
+
+### Cursor slash commands
+
+```
+/userplane-integrate
+/userplane-audit
+/userplane-debug rec_01HX2KYN
+/userplane-debug "Sarah's checkout failure yesterday"
+/userplane-privacy
 ```
 
 **`/userplane:integrate`** detects your framework from `package.json` (Next.js, Nuxt, Angular, Vue, SvelteKit, Astro, TanStack Start, React/Vite, or static HTML), loads the matching skill, and writes the integration — provider component, script tag, env var, CSP headers. It finishes with a summary of files changed and the next step (usually: set your write key and restart the dev server). If Userplane is already installed, it tells you to run `/userplane:audit` instead.
@@ -187,7 +218,7 @@ The skills also activate automatically when a prompt matches. No slash command i
 
 ## MCP servers
 
-Declared in `.mcp.json` and auto-loaded by the Claude Code and Codex plugins.
+Declared in `.mcp.json` for Claude Code/Codex and `mcp.json` for Cursor.
 
 | Server | URL | Purpose |
 |---|---|---|
@@ -216,11 +247,16 @@ Then install `userplane` from `/plugins` and verify `/mcp` shows `userplane-work
 .claude-plugin/
   plugin.json
   marketplace.json
-.mcp.json                  # 2 HTTP MCP servers
+.cursor-plugin/
+  plugin.json
+.mcp.json                  # Claude Code MCP config
+mcp.json                   # Cursor MCP config
 plugins/userplane/         # Codex plugin wrapper
   .codex-plugin/plugin.json
   .mcp.json -> ../../.mcp.json
   skills -> ../../skills
+rules/                     # Cursor rules
+  userplane-workflows.mdc
 agents/                    # 4 subagents (1:1 with commands)
   integrate-agent.md
   audit-agent.md
@@ -231,7 +267,7 @@ commands/                  # 4 JTBD slash commands
   audit.md
   debug.md
   privacy.md
-skills/                    # 18 skills: 14 domain skills + 4 Codex workflows
+skills/                    # 18 skills: 14 framework/reference + 4 Codex workflows
   userplane-react/
   userplane-nextjs/
   userplane-integrate/

@@ -1,0 +1,21 @@
+---
+description: Userplane workflow guidance for Cursor. Use when the user asks to integrate, audit, debug, or privacy-check Userplane screen recording in a web app.
+alwaysApply: false
+---
+
+# Userplane Workflows
+
+Use the bundled Userplane skills and agents instead of inventing integration steps from memory.
+
+## Workflow routing
+
+- For installation requests, use `/userplane-integrate` or the `integrate-agent`.
+- For verification requests, use `/userplane-audit` or the `audit-agent`.
+- For recording/session debugging, use `/userplane-debug` or the `debug-agent`.
+- For PII, redaction, GDPR, or leakage checks, use `/userplane-privacy` or the `privacy-agent`.
+
+## Ground truth
+
+- Load the matching framework skill before writing or reviewing code.
+- Use `userplane-web-sdk`, `userplane-metadata-sdk`, `userplane-cdn`, `userplane-sensitive-data`, and `userplane-best-practices` for cross-cutting details.
+- Preserve Claude Code parity: do not rename existing skills, agents, or command files.

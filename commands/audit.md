@@ -1,4 +1,5 @@
 ---
+name: userplane-audit
 description: Verify an existing Userplane install is correct — read-only PASS/FAIL checklist with diffs.
 argument-hint: ""
 ---

@@ -1,4 +1,5 @@
 ---
+name: userplane-integrate
 description: Add Userplane screen recording to this repo — detects the framework and writes the install.
 argument-hint: ""
 ---

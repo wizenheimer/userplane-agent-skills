@@ -1,4 +1,5 @@
 ---
+name: userplane-privacy
 description: Audit this repo's Userplane privacy posture — blur attrs, metadata PII, CSP, inline leaks.
 argument-hint: ""
 ---

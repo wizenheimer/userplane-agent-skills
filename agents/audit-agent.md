@@ -1,6 +1,8 @@
 ---
 name: audit-agent
 description: Verify an existing Userplane integration is correct. Read-only PASS/FAIL checklist against the matching framework skill — provider wiring, script placement, SSR hazards, setUser/setMetadata, CSP, env consistency. Use when the user asks to audit, review, verify, or check their Userplane setup.
+model: fast
+readonly: true
 tools: Read, Glob, Grep, Bash
 skills: userplane-best-practices, userplane-cdn, userplane-web-sdk, userplane-metadata-sdk
 ---

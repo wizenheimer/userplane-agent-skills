@@ -1,4 +1,5 @@
 ---
+name: userplane-debug
 description: Diagnose a Userplane recording — root-cause a failing session via the workspace MCP.
 argument-hint: "<recording-id | description>"
 ---
